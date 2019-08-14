@@ -1,0 +1,71 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutEntrevista.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">         
+        <!-- 
+        Painel de listagem de histórico 
+        -->
+        <h:form id="listagem">
+            <b:container>                
+                <b:panel title="Histórico de respostas" 
+                         look="primary" 
+                         medium-screen="12">
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{historicoMB.respostas}"
+                                         var="resposta"
+                                         excel="true"
+                                         csv="true"
+                                         pdf="true"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         custom-lang-url="//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="table">
+                                <b:dataTableColumn value="#{resposta.questionario.nomeCompleto}" 
+                                                   order="asc" 
+                                                   label="Questionário"/>
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(resposta.dataHora)}"
+                                                   label="Data e hora de resposta"/>                                                                                                
+                            </b:dataTable>                            
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="9">
+                            <b:commandButton value="Voltar" 
+                                             action="#{historicoMB.voltar}" 
+                                             update="listagem" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>                        
+                    </b:row>
+                </b:panel>                                
+            </b:container>
+        </h:form>        
+    </ui:define>
+</ui:composition>

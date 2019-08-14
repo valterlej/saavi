@@ -1,0 +1,87 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutEntrevista.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">
+        <!-- 
+        Painel de listagem de questionários disponíveis 
+        -->
+        <h:form id="listagem">
+            <b:container>
+                <b:growl id="growlMsg"
+                         globalOnly="true"
+                         placementFrom="top"
+                         show-detail="true" 
+                         show-summary="false" 
+                         allowDismiss="true" 
+                         animation-enter="animated bounceInDown"
+                         animation-exit="animated flipOutX"
+                         delay="5000" 
+                         escape="true" />
+                <b:panel title="Questionários disponíveis" 
+                         look="primary" 
+                         medium-screen="12">
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{questionariosDisponiveisMB.questionarios}"
+                                         var="questionario"
+                                         excel="false"
+                                         csv="false"
+                                         pdf="false"
+                                         info="false"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         custom-lang-url="//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="table">
+                                <b:dataTableColumn value="#{questionario.nomeCompleto}" 
+                                                   order="asc" 
+                                                   label="Questionário"/>
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraInicio)}"                                    
+                                                   label="Data e hora de início"/>
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraFinal)}"                                    
+                                                   label="Data e hora de fim"/>
+                                <b:dataTableColumn value="#{questionario.descricao}" 
+                                                   label="Descrição"/>
+                                <b:dataTableColumn value="#{questionariosDisponiveisMB.chaveAcesso(questionario)}" 
+                                                   label="Requer chave de acesso"/>
+                                <b:dataTableColumn label="" 
+                                                   width="20px">
+                                    <b:commandButton style="padding: 0 12px;" 
+                                                     iconAwesome="play" 
+                                                     look="primary" 
+                                                     action="#{questionariosDisponiveisMB.iniciarQuestionario(questionario)}" 
+                                                     title="Responder" 
+                                                     update="listagem"/>                                    
+                                </b:dataTableColumn>
+                            </b:dataTable>                            
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>                    
+                </b:panel>                                
+            </b:container>
+        </h:form>       
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,166 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://bootsfaces.net/ui">
+    <h:head>
+        <title>SAAVI</title>
+        <style type="text/css">
+            .form-signin {
+                margin: 0 auto;
+                max-width: 330px;
+                padding: 15px;
+            }
+        </style>
+        <script>
+            $.blockUI.defaults.css.width = '20%';
+            $.blockUI.defaults.css.left = '40%';
+            $.blockUI.defaults.css.height = '5em';
+            $.blockUI.defaults.css.borderRadius = '10px';
+            $.blockUI.defaults.overlayCSS.opacity = 0.7;
+            $.blockUI.defaults.message = '<div style="padding-top:1em"><b:spinner name="circle-o-notch" size="2x" /> <span style="font-size: 1.5em; margin-left: 10px;"> Aguarde... </span> </div>';
+        </script>
+    </h:head>
+    <h:body style="padding-top: 160px; background-color: #add;">
+        <h:form id="loginForm">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="#{acessoMB.nomePainel}" 
+                         look="primary" 
+                         medium-screen="10" 
+                         rendered="#{!acessoMB.administradorEntrevistadoLogado}">
+                    <b:row>
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="E-mail" 
+                                         id="username" 
+                                         value="#{acessoMB.email}"
+                                         ajax="true"
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         mask="email"
+                                         label="E-mail:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="envelope" />
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12"
+                                  style-class="message">
+                            <b:message for="username" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column medium-screen="12">
+                            <b:inputSecret placeholder="Senha" 
+                                           id="password" 
+                                           value="#{acessoMB.senha}"
+                                           ajax="true" 
+                                           autocomplete="false"
+                                           update="@(.message)"
+                                           label="Senha:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="key" 
+                                                   solid="true" />
+                                </f:facet>
+                            </b:inputSecret>
+                        </b:column>
+                        <b:column medium-screen="12" styleClass="message">
+                            <b:message for="password" auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="2" 
+                                  offset="0">
+                            <b:commandLink action="#{acessoMB.recuperarSenha}" 
+                                           value="Recuperar senha." />                            
+                        </b:column>
+                        <b:column span="3" 
+                                  offset="4">
+                            <b:commandButton value="Entrar" 
+                                             action="#{acessoMB.acessar}" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Solicitar acesso" 
+                                             action="#{acessoMB.novoEntrevistado}" 
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3">
+                            <b:button value="Contatos" 
+                                      look="info" 
+                                      onclick="$('.modalPseudoClass').modal()" 
+                                      style="width:100%"/>
+                        </b:column>
+                    </b:row>
+                </b:panel>
+                <b:modal id="amodal" 
+                         title="Sistema de Autoavaliação Institucional - SAAVI" 
+                         styleClass="modalPseudoClass">
+                    <p>CPA</p>
+                    <p>#{acessoMB.configuracao.nomeInstituicao}</p>
+                    <p>Endereço: #{acessoMB.configuracao.enderecoInstituicao}</p>
+                    <p>E-mail: #{acessoMB.configuracao.emailContato}</p>
+                    <p>Telefone: #{acessoMB.configuracao.telefoneInstituicao}</p>  
+                    <hr/>
+                    <p>Desenvolvedor</p>
+                    <p>Prof. Valter Estevam</p>                    
+                    <p>Contato disponível em: <a href="http://www.valterestevam.com.br" target="_blanck">valterestevam.com.br</a></p>                    
+                    <f:facet name="footer">
+                        <b:button value="Ok" 
+                                  look="primary" 
+                                  dismiss="modal" />                            
+                    </f:facet>
+                </b:modal>
+                <b:panel title="Escolha de perfil" 
+                         look="primary" 
+                         medium-screen="10" 
+                         rendered="#{acessoMB.administradorEntrevistadoLogado}">                  
+                    <b:row>
+                        <b:column span="3">
+                            <b:commandButton value="Administrador" 
+                                             action="#{acessoMB.escolherPerfilAdministrador}" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Entrevistado" 
+                                             action="#{acessoMB.escolherPerfilEntrevistado}" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+    </h:body>
+</html>

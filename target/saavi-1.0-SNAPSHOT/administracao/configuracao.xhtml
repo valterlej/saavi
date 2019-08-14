@@ -1,0 +1,331 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutAdministrador.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">
+        <!-- 
+        Painel de edição de configurações 
+        -->
+        <h:form id="edicao">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="Edição de Configurações" 
+                         look="primary" 
+                         medium-screen="12">                                       
+                    <!-- 
+                    Nome da instituição 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Nome da instituição" 
+                                         id="nomeinstituicao" 
+                                         value="#{configuracaoMB.configuracaoWeb.nomeInstituicao}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Nome da instituiçao:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="home" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="nomeinstituicao"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Endereço da instituição 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Endereço da instituição" 
+                                         id="enderecoinstituicao" 
+                                         value="#{configuracaoMB.configuracaoWeb.enderecoInstituicao}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Endereço da instituiçao:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="map-marker" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="enderecoinstituicao"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Telefone da instituição 
+                    -->
+                    <b:row tooltip="Informe um telefone para contato com o responsável pela CPA">                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Telefone da instituição" 
+                                         id="telefoneinstituicao" 
+                                         value="#{configuracaoMB.configuracaoWeb.telefoneInstituicao}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Telefone da instituiçao:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="phone" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="telefoneinstituicao"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    E-mail da instituição 
+                    -->
+                    <b:row tooltip="Informe um e-mail válido para contato com o responsável pela CPA">
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="E-mail da instituição" 
+                                         id="emailinstituicao" 
+                                         value="#{configuracaoMB.configuracaoWeb.emailContato}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)"
+                                         mask="email"
+                                         label="E-mail:"
+                                         class="bf-required">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="envelope" />
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  styleClass="message">
+                            <b:message for="emailinstituicao" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <!-- Endereço do servidor web -->
+                    <b:row tooltip="Informe o endereço do servidor web. Ex: http://irati.ifpr.edu.br:8080">
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Endereço do servidor" 
+                                         id="enderecoservidor" 
+                                         value="#{configuracaoMB.configuracaoWeb.enderecoServidor}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)"
+                                         label="Endereço do servidor:"
+                                         class="bf-required">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="envelope" />
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  styleClass="message">
+                            <b:message for="enderecoservidor" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <hr/>
+                    <b:row>
+                        <b:column span="5">
+                            <p><b>Configuração de envio de e-mails</b></p>
+                        </b:column>
+                        <b:column span="2"
+                                  offset="5">                            
+                                <b:button value="Orientações" 
+                                          look="info" 
+                                          onclick="$('.modalPseudoClass').modal()" 
+                                          style="width:100%" 
+                                          iconAwesome="cog" 
+                                          iconAlign="left"/>
+                        </b:column>
+                    </b:row>
+                    <hr/>
+                    <b:modal id="amodal" 
+                             title="Orintações de configuração" 
+                             styleClass="modalPseudoClass">
+                        <p>Para configuração de envio com conta gmail ou G Suite que são tipicamente utilizadas nos IFs deve-se alterar apenas:</p>
+                        <p>mail.smtp.host --> smtp.gmail.com </p>
+                        <p>mail.smtp.user --> sua_conta@ifXX.edu.br </p>
+                        <p>E-mail utilizado para envio: --> sua_conta@ifXX.edu.br </p>
+                        <p>Senha da conta usada para envio: --> sua_senha </p>
+                        <p>Observação importante (1): o google classifica sistemas como o SAAVI como "Apps menos seguros". 
+                            Portanto, é necessário permitir o envio de e-mails por este tipo de aplicativo e isso pode ser 
+                            configurado <a href="https://support.google.com/accounts/answer/6010255?hl=pt-BR" target="_blank">aqui</a>. </p>
+                        <p>Observação importante (2): verifique junto ao administrador das contas de e-mail de sua instituição se o limite diário de envios está adequado.
+                            Acreditamos que o pico de envios não será superior a 2000 na maior parte dos casos. Este pico ocorre apenas durante a 
+                            aplicação dos questionários.</p>
+                        <p>Para configuração de outros provedores verifique as configurações específicas no site de cada um deles.</p>
+                        <f:facet name="footer">
+                            <b:button value="Ok" 
+                                      look="primary" 
+                                      dismiss="modal" />                            
+                        </f:facet>
+                    </b:modal>
+                    <ui:repeat value="#{configuracaoMB.propriedadeEmails}" 
+                               var="propriedade">
+                        <b:row>                        
+                            <b:column medium-screen="12" 
+                                      tooltip="Deixe em branco para não utilizar a propriedade.">
+                                <b:inputText placeholder="#{propriedade.nome}" 
+                                             value="#{propriedade.valor}"
+                                             ajax="true" 
+                                             autocomplete="false" 
+                                             update="@(.message)" 
+                                             class="bf-required" 
+                                             label="#{propriedade.nome}">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome value="cog" 
+                                                       solid="true"/>                                    
+                                    </f:facet>
+                                </b:inputText>
+                            </b:column>
+                            <b:column medium-screen="12" 
+                                      style-class="message">
+                                <b:message for="@previous"/>
+                            </b:column>
+                        </b:row>                        
+                    </ui:repeat>
+                    <!-- E-mail da conta utilizada -->
+                    <b:row tooltip="Informe um e-mail válido.">
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="E-mail utilizado para envio" 
+                                         id="emailenvio" 
+                                         value="#{configuracaoMB.autenticacaoEnvioEmail.usuario}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)"
+                                         mask="email"
+                                         label="E-mail utilizado para envio:"
+                                         class="bf-required">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="envelope" />
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  styleClass="message">
+                            <b:message for="emailenvio" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>                   
+                    <!-- 
+                    Senha da conta de envio 
+                    -->
+                    <b:row>
+                        <b:column medium-screen="12">
+                            <b:inputSecret placeholder="Senha da conta usada para envio" 
+                                           id="senha" 
+                                           value="#{configuracaoMB.autenticacaoEnvioEmail.senha}"
+                                           ajax="true" 
+                                           autocomplete="false" 
+                                           update="@(.message)"
+                                           class="bf-required"
+                                           label="Senha da conta usada para envio:">                                                                
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="key" 
+                                                   solid="true"/>
+                                </f:facet>
+                            </b:inputSecret>
+                        </b:column>
+                        <b:column medium-screen="8" 
+                                  styleClass="message">
+                            <b:message for="senha" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <!-- Endereço de E-mail de teste -->
+                    <b:row tooltip="Informe um destinatário para o envio do e-mail de teste.">
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="E-mail do destinatário" 
+                                         id="emaildestinatario" 
+                                         value="#{configuracaoMB.destinatarioTeste}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)"
+                                         mask="email"
+                                         label="E-mail do destinatário:"
+                                         class="bf-required">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome name="envelope" />
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>                        
+                        <b:column medium-screen="12" 
+                                  styleClass="message">
+                            <b:message for="emaildestinatario" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="9">
+                            <!-- 
+                            botão para envio do e-mail de teste 
+                            -->
+                            <b:commandButton value="Enviar e-mail teste" 
+                                             action="#{configuracaoMB.enviarTeste}" 
+                                             update="edicao" 
+                                             look="info" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                    <b:row><p></p></b:row>
+                    <!-- 
+                    Botões 
+                    -->                    
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Salvar" 
+                                             action="#{configuracaoMB.salvar}" 
+                                             update="edicao" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{configuracaoMB.cancelar}" 
+                                             update="edicao" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>        
+    </ui:define>
+</ui:composition>

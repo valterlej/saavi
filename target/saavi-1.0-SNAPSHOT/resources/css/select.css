@@ -1,0 +1,15 @@
+.select div > .btn-group {
+    width:100%;
+}
+.select div > .btn-group > button {
+    width:100%;
+}
+.select div > .btn-group > ul {
+    width:100%;
+}
+.tabelarelatorio {
+    background-color: red;
+} 
+.ui-state-default {
+    background-color: #BCD2EE;
+}

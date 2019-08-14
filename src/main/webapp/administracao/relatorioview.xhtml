@@ -1,0 +1,195 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutAdministrador.xhtml"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:p="http://primefaces.org/ui">    
+    <ui:define name="content">
+        <h:outputStylesheet name="select.css" 
+                            library="css"/>
+        <!-- 
+        Relatorio 
+        -->
+        <h:form id="relatorio">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="#{relatorioViewMB.questionario.nomeCompleto}" 
+                         look="primary" 
+                         medium-screen="12" 
+                         style="border: 0px;">
+                    <b:row>
+                        <b:column medium-screen="12" 
+                                  style="margin-left: 15px; margin-bottom: 20px;">
+                            <h3>#{relatorioViewMB.questaoAtual.texto}</h3>                            
+                        </b:column>
+                    </b:row>
+                    <ui:repeat value="#{relatorioViewMB.tabelas}" 
+                               var="tabela">
+                        <!-- 
+                        Questao de multipla escolha 
+                        -->
+                        <b:panel title="#{tabela.titulo}" 
+                                 look="primary" 
+                                 medium-screen="12" 
+                                 rendered="#{tabela.multiplaEscolha}" 
+                                 style="border: 0px;">
+                            <!-- 
+                            Valores absolutos 
+                            -->
+                            <p:dataTable var="registro" 
+                                         value="#{tabela.registros}" 
+                                         styleClass="tabelarelatorio" 
+                                         rendered="#{(relatorioViewMB.mostrarTabela and relatorioViewMB.tabelaValoresAbsolutos)}">                    
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{relatorioViewMB.obterColunaInicialTabela(tabela)}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{registro.titulo}" />
+                                </p:column>
+                                <p:columns value="#{tabela.colunas}" 
+                                           var="coluna" 
+                                           columnIndexVar="colIndex">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{coluna}" />
+                                    </f:facet>
+                                    <h:outputText value="#{registro.valorAbsolutoPorColuna(coluna)}" />
+                                </p:columns>
+                            </p:dataTable>
+                            <br/>
+                            <br/>
+                            <p:chart type="bar" 
+                                     model="#{relatorioViewMB.obterModelo(tabela,true)}" 
+                                     rendered="#{(relatorioViewMB.mostrarGrafico and relatorioViewMB.graficoValoresAbsolutos)}" 
+                                     style="#{relatorioViewMB.estiloGrafico(tabela)}"/>
+                            <!-- 
+                            Valores relativos 
+                            -->
+                            <p:dataTable var="registro" 
+                                         value="#{tabela.registros}" 
+                                         styleClass="tabelarelatorio" 
+                                         rendered="#{relatorioViewMB.mostrarTabela and relatorioViewMB.tabelaValoresPercentuais}">                    
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{relatorioViewMB.obterColunaInicialTabela(tabela)}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{registro.titulo}" />
+                                </p:column>
+                                <p:columns value="#{tabela.colunas}" 
+                                           var="coluna" 
+                                           columnIndexVar="colIndex">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{coluna}" />
+                                    </f:facet>
+                                    <h:outputText value="#{registro.valorPercentualPorColuna(coluna)}" />
+                                </p:columns>
+                            </p:dataTable>
+                            <br/>
+                            <br/>
+                            <p:chart type="bar" 
+                                     model="#{relatorioViewMB.obterModelo(tabela,false)}" 
+                                     rendered="#{(relatorioViewMB.mostrarGrafico and relatorioViewMB.graficoValoresPercentuais)}" 
+                                     style="#{relatorioViewMB.estiloGrafico(tabela)}"/>
+                        </b:panel>
+                        <!-- 
+                        Questao aberta 
+                        -->
+                        <b:panel title="#{tabela.titulo}" 
+                                 look="primary" 
+                                 medium-screen="12" 
+                                 rendered="#{!tabela.multiplaEscolha}">
+                            <p:dataTable var="registro" 
+                                         value="#{tabela.registros}" 
+                                         rendered="#{relatorioViewMB.mostrarTabela}">                                                   
+                                <p:columns value="#{tabela.colunas}" 
+                                           var="coluna" 
+                                           columnIndexVar="colIndex">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{coluna}" />
+                                    </f:facet>
+                                    <h:outputText value="#{registro.valorPorColuna(coluna)}" />
+                                </p:columns>
+                            </p:dataTable>
+                        </b:panel>
+                    </ui:repeat>
+                    <!-- 
+                    Botões 
+                    -->                    
+                    <b:row>                       
+                        <b:column span="3">
+                            <b:link href="dados.csv" 
+                                    target="_blank">
+                                <b:button look="sucess" 
+                                          value="Exportar dados" 
+                                          style="width:100%"/>
+                            </b:link>
+                        </b:column>
+                        <b:column span="3"
+                                  offset="3">
+                            <b:commandButton value="Anterior" 
+                                             action="#{relatorioViewMB.retornar}" 
+                                             update="relatorio" 
+                                             look="primary" 
+                                             style="width:100%" 
+                                             disabled="#{!relatorioViewMB.mostrarAnterior}"/>
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Próxima" 
+                                             action="#{relatorioViewMB.avancar}" 
+                                             update="relatorio" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" 
+                                             disabled="#{!relatorioViewMB.mostrarProximo}"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <br/>
+                        <br/>
+                    </b:row>
+                    <b:row>
+                        <b:column medium-screen="10" 
+                                  offset="1">
+                            <ui:repeat value="#{relatorioViewMB.questoes}" 
+                                       var="questao">
+                                <b:column span="1">
+                                    <b:commandButton value="#{relatorioViewMB.getValorBotao(questao.ordem)}" 
+                                                     action="#{relatorioViewMB.irPara(questao.ordem)}" 
+                                                     update="relatorio" 
+                                                     immediate="true"
+                                                     look="#{relatorioViewMB.obterEstiloBotao(questao.ordem)}" 
+                                                     style="width:100%" 
+                                                     size="sm"/>
+                                </b:column>
+                            </ui:repeat>
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+    </ui:define>
+</ui:composition>

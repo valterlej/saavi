@@ -1,0 +1,176 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutEntrevista.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">    
+    <ui:define name="content">
+        <!-- 
+        Painel de listagem de questionários disponíveis
+        -->
+        <h:form id="formchaveacesso">
+            <b:container>
+                <b:growl id="growl" 
+                         globalOnly="true" 
+                         placementFrom="top"
+                         show-detail="true" 
+                         show-summary="false" 
+                         allowDismiss="true" 
+                         animation-enter="animated bounceInDown"
+                         animation-exit="animated flipOutX"
+                         delay="#{questionarioEmRespostaMB.delayGrowl}" 
+                         escape="false"/>
+                <b:panel title="Chave de acesso"
+                         look="primary"
+                         medium-screen="12" 
+                         rendered="#{!questionarioEmRespostaMB.chaveAcessoLiberada}">
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Chave de acesso" 
+                                         id="chaveacesso" 
+                                         value="#{questionarioEmRespostaMB.chaveDigitada}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Chave de acesso:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="key" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="chaveacesso"/>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="9">
+                            <b:commandButton value="Iniciar" 
+                                             action="#{questionarioEmRespostaMB.validarChaveAcesso}" 
+                                             update="formchaveacesso, formquestionario, growl" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>                        
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form> 
+        <!-- 
+        Painel de listagem de questionários disponíveis 
+        -->
+        <h:form id="formquestionario">
+            <b:container>                                              
+                <b:panel title="Questionário" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questionarioEmRespostaMB.chaveAcessoLiberada}">
+                    <ui:repeat value="#{questionarioEmRespostaMB.ordem}" 
+                               var="i">
+                        <b:panel title="#{questionarioEmRespostaMB.questoes.get(i).rotulo}"
+                                 look="info"
+                                 medium-screen="12">
+                            <b:row>                        
+                                <b:column medium-screen="12">
+                                    <b:row>
+                                        <h4>
+                                            <span style="font-weight: bold; margin-left: 5px">
+                                                ##{i+1}. </span>#{questionarioEmRespostaMB.questoes.get(i).texto}
+                                            <span style="font-weight: bold; margin-left: 5px">
+                                                #{questionarioEmRespostaMB.questoes.get(i).obrigatoriaString}
+                                            </span>
+                                        </h4>
+                                    </b:row>                                    
+                                    <b:row>
+                                        <h6>#{questionarioEmRespostaMB.questoes.get(i).dica}</h6>
+                                    </b:row>
+                                    <b:row>
+                                        <h4></h4>
+                                    </b:row>                                    
+                                    <b:row rendered="#{questionarioEmRespostaMB.isAberta(questionarioEmRespostaMB.questoes.get(i))}">
+                                        <b:inputTextarea placeholder="Resposta..." 
+                                                         ajax="true" 
+                                                         autocomplete="false" 
+                                                         update="@(.message)" 
+                                                         class="bf-required"
+                                                         value="#{questionarioEmRespostaMB.respostas.get(i).texto}">
+                                        </b:inputTextarea>
+                                        <p style="font-size: 11px; margin-top: -10px;">
+                                            Responda com até #{questionarioEmRespostaMB.questoes.get(i).tamanho} caracteres.
+                                        </p>                                   
+                                    </b:row>
+                                    <b:row rendered="#{!questionarioEmRespostaMB.isAberta(questionarioEmRespostaMB.questoes.get(i))}">
+                                        <b:dataTable value="#{questionarioEmRespostaMB.questoes.get(i).opcoes}" 
+                                                     var="opcao"
+                                                     info="false"
+                                                     paginated="false"
+                                                     searching="false">
+                                            <b:dataTableColumn style="width: 15px;" 
+                                                               label="" 
+                                                               orderable="false">
+                                                <b:selectBooleanCheckbox caption="" 
+                                                                         value="#{questionarioEmRespostaMB.respostas.get(i).getRespostas().get(opcao).checked}"/>
+                                            </b:dataTableColumn>
+                                            <b:dataTableColumn value="#{opcao.textoCompleto}" 
+                                                               label="Opções" 
+                                                               orderable="false"/>
+                                        </b:dataTable> 
+                                        <p style="font-size: 11px;">
+                                            Selecione até #{questionarioEmRespostaMB.questoes.get(i).quantidadeMaxima} opção(ões).
+                                        </p>
+                                    </b:row>            
+                                </b:column>                                
+                            </b:row> 
+                        </b:panel>  
+                    </ui:repeat>  
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Salvar" 
+                                             action="#{questionarioEmRespostaMB.salvar}" 
+                                             update="formchaveacesso, formquestionario" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:button value="Cancelar" look="danger" onclick="$('.modalPseudoClassQuestionario').modal()" style="width:100%"/>
+                        </b:column>
+                    </b:row>   
+
+                    <b:modal id="aamodal" 
+                             title="Cancelar" 
+                             styleClass="modalPseudoClassQuestionario">
+                        <p>Deseja realmente cancelar o preenchimento do questionário? Os dados informados serão perdidos.</p>                
+                        <f:facet name="footer">
+                            <b:commandButton value="Sim, sair do questionário." 
+                                             action="#{questionarioEmRespostaMB.cancelar}" 
+                                             immediate="true" 
+                                             look="primary"/>  
+                            <b:button value="Não, continuar no questionário." 
+                                      look="primary" 
+                                      dismiss="modal"/>  
+                        </f:facet>
+                    </b:modal>
+
+                </b:panel>
+            </b:container>
+        </h:form>
+    </ui:define>
+</ui:composition>

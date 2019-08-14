@@ -1,0 +1,326 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutAdministrador.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">
+        <h:outputStylesheet name="select.css" 
+                            library="css"/>
+        <!-- 
+        Painel de listagem de questionários 
+        -->
+        <h:form id="listagem">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="Questionário" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questionarioMB.view.mostrarListagem}">
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{questionarioMB.entidades}"
+                                         var="questionario"
+                                         excel="true"
+                                         csv="true"
+                                         pdf="true"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         custom-lang-url="//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="table">
+                                <b:dataTableColumn value="#{questionario.nomeCompleto}" 
+                                                   order="asc" 
+                                                   label="Nome completo"/>
+                                <b:dataTableColumn value="#{questionario.nomeCurto}" 
+                                                   label="Nome curto"/> 
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraInicio)}"                                    
+                                                   label="Data e hora de início"/>
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraFinal)}"                                    
+                                                   label="Data e hora de fim"/>
+                                <b:dataTableColumn value="#{questionario.descricao}"
+                                                   label="Descrição"/>
+                                <b:dataTableColumn value="#{questionario.chaveAcesso}"
+                                                   label="Chave de acesso"/>
+                                <b:dataTableColumn label="" 
+                                                   width="40px">
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="pencil" 
+                                                     look="primary" 
+                                                     action="#{questionarioMB.editar(questionario)}" 
+                                                     title="Editar" 
+                                                     update="listagem, edicao"/>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="trash" 
+                                                     look="danger" 
+                                                     action="#{questionarioMB.remover(questionario)}" 
+                                                     title="Excluir"/>
+                                </b:dataTableColumn>
+                            </b:dataTable>                            
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Novo questionário" 
+                                             action="#{questionarioMB.novo}" 
+                                             update="listagem, edicao" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{questionarioMB.cancelar}" 
+                                             immediate="true" 
+                                             look="danger" 
+                                             update="listagem, edicao"
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+        <!-- 
+        Painel de edição de questionário 
+        -->
+        <h:form id="edicao">
+            <b:container>
+                <b:panel title="Edição de Questionário" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questionarioMB.view.mostrarEdicao}">                                       
+                    <!-- 
+                    Nome completo 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Nome completo" 
+                                         id="nomecompleto" 
+                                         value="#{questionarioMB.entidade.nomeCompleto}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Nome completo:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pen" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="nomecompleto"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Nome curto 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Nome curto" 
+                                         id="nomecurto" 
+                                         value="#{questionarioMB.entidade.nomeCurto}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Nome curto:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pen" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="nomecurto"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Data e hora de início 
+                    -->
+                    <b:row>
+                        <b:column medium-screen="12">
+                            <b:dateTimePicker value="#{questionarioMB.entidade.dataHoraInicio}"
+                                              id="datahorainicio"
+                                              allow-input-toggle="true"
+                                              icon-position="left"
+                                              side-by-side="false"
+                                              show-date="false"
+                                              show-time="false"
+                                              show-icon="true"
+                                              use-current="true"
+                                              class="bf-required"
+                                              format="DD/MM/YYYY HH:mm"
+                                              label="Data e hora de início:">
+                            </b:dateTimePicker>                                                                             
+                        </b:column>
+                        <b:column medium-screen="8" 
+                                  styleClass="message">
+                            <b:message for="datahorainicio" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Data e hora de final 
+                    -->
+                    <b:row>
+                        <b:column medium-screen="12">
+                            <b:dateTimePicker value="#{questionarioMB.entidade.dataHoraFinal}"
+                                              id="datahorafim"
+                                              allow-input-toggle="true"
+                                              icon-position="left"
+                                              side-by-side="false"
+                                              show-date="false"
+                                              show-time="false"
+                                              show-icon="true"
+                                              use-current="true"
+                                              class="bf-required"
+                                              format="DD/MM/YYYY HH:mm"
+                                              label="Data e hora de fim:">
+                            </b:dateTimePicker>                                                                             
+                        </b:column>
+                        <b:column medium-screen="8" 
+                                  styleClass="message">
+                            <b:message for="datahorafim" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Descrição 
+                    -->
+                    <b:row>
+                        <b:column medium-screen="12" 
+                                  tooltip="Informe aqui uma descrição ou as orientações de preenchimento do questionário.">
+                            <b:inputTextarea placeholder="Descrição..." 
+                                             id="descricao"
+                                             value="#{questionarioMB.entidade.descricao}"
+                                             ajax="true" 
+                                             autocomplete="false" 
+                                             update="@(.message)" 
+                                             class="bf-required"
+                                             label="Descrição / Orientações">
+                            </b:inputTextarea>                                                                            
+                        </b:column>
+                        <b:column medium-screen="8" 
+                                  styleClass="message">
+                            <b:message for="descricao" 
+                                       auto-update="true" />
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Chave de acesso 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12" 
+                                  tooltip="Deixe em branco para não exigir a chave.">
+                            <b:inputText placeholder="Chave de acesso" 
+                                         id="chaveacesso" 
+                                         value="#{questionarioMB.entidade.chaveAcesso}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Chave de acesso:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="key" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="nomecurto"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Categorias 
+                    -->     
+                    <div class="select">
+                        <b:row>
+                            <b:column medium-screen="12">                                
+                                <b:selectMultiMenu value="#{questionarioMB.categoriasSelecionadas}" 
+                                                   id="categorias" 
+                                                   label="Categorias"
+                                                   allSelectedText="Todas as categorias selecionadas."
+                                                   nonSelectedText="Nenhuma categoria selecionada.">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome name="list-alt" />
+                                    </f:facet>
+                                    <f:selectItems value="#{questionarioMB.categorias}" 
+                                                   var="categoria" 
+                                                   itemLabel="#{categoria.rotuloCompleto}" 
+                                                   itemValue="#{questionarioMB.idString(categoria.idCategoria)}"/>                                                                
+                                </b:selectMultiMenu>
+                                <b:column medium-screen="12" 
+                                          style-class="message">
+                                    <b:message for="categorias"/>
+                                </b:column>
+                            </b:column>
+                        </b:row>
+                    </div>
+                    <!-- 
+                    Botões 
+                    -->
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="3">
+                            <b:commandButton value="Salvar" 
+                                             action="#{questionarioMB.salvarEdicao}" 
+                                             update="listagem, edicao" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Editar questões" 
+                                             action="#{questionarioMB.editarQuestoes}" 
+                                             update="listagem, edicao" 
+                                             look="info" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{questionarioMB.cancelarEdicao}" 
+                                             update="listagem, edicao" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>        
+    </ui:define>
+</ui:composition>

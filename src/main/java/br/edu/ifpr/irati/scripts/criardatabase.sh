@@ -1,0 +1,1 @@
+mysql -u root -p -e "CREATE DATABASE saavidatabase CHARACTER SET utf8 COLLATE utf8_unicode_ci"

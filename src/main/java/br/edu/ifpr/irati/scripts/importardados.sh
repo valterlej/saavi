@@ -1,0 +1,1 @@
+mysql -u root -p --default_character_set utf8 saavidatabase < saavidatabase.sql

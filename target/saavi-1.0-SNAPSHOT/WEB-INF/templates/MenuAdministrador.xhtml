@@ -1,0 +1,66 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+    <h:form id="menuForm">
+        <b:navBar brand="SAAVI - Administração" brandHref="#" inverse="false" position="top" sticky="true">
+            <b:navbarLinks>
+                <b:navCommandLink value="Administrador" 
+                                  action="#{administracaoMB.irAdministrador}" 
+                                  iconAwesome="user" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Configuração" 
+                                  action="#{administracaoMB.irConfiguracao}" 
+                                  iconAwesome="cogs" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Campus" 
+                                  action="#{administracaoMB.irCampus}" 
+                                  iconAwesome="home" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Categoria" 
+                                  action="#{administracaoMB.irCategoria}" 
+                                  iconAwesome="list-alt" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Entrevistado" 
+                                  action="#{administracaoMB.irEntrevistado}" 
+                                  iconAwesome="users" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Questionário" 
+                                  action="#{administracaoMB.irQuestionario}" 
+                                  iconAwesome="question-circle" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Relatório" 
+                                  action="#{administracaoMB.irRelatorio}" 
+                                  iconAwesome="book" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+                <b:navCommandLink value="Sair" 
+                                  action="#{administracaoMB.sair}" 
+                                  iconAwesome="sign-out" 
+                                  iconAlign="left">
+                </b:navCommandLink>
+            </b:navbarLinks>                                
+        </b:navBar>
+    </h:form>
+</ui:composition>

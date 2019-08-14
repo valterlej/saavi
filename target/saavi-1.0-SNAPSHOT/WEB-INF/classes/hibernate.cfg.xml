@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>    
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/saavidatabase</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.show_sql">false</property>
+    <property name="hibernate.format_sql">false</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">root</property>
+    <mapping class="br.edu.ifpr.irati.modelo.Campus"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Categoria"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Entrevistado"/> 
+    <mapping class="br.edu.ifpr.irati.modelo.Opcao"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Questao"/>   
+    <mapping class="br.edu.ifpr.irati.modelo.QuestaoAberta"/>
+    <mapping class="br.edu.ifpr.irati.modelo.QuestaoMultiplaEscolha"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Questionario"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Resposta"/>
+    <mapping class="br.edu.ifpr.irati.modelo.RespostaAberta"/>
+    <mapping class="br.edu.ifpr.irati.modelo.RespostaMultiplaEscolha"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Respondente"/>
+    <mapping class="br.edu.ifpr.irati.modelo.Administrador"/>
+    <mapping class="br.edu.ifpr.irati.modelo.ConfiguracaoWeb"/>
+    <mapping class="br.edu.ifpr.irati.configuracao.modelo.AutenticacaoEmail"/>
+    <mapping class="br.edu.ifpr.irati.configuracao.modelo.PropriedadeEmail"/>
+  </session-factory>
+</hibernate-configuration>

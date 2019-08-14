@@ -1,0 +1,537 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/LayoutAdministrador.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">
+        <!-- 
+        Painel de listagem de questões 
+        -->
+        <h:form id="listagem">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="#{questionarioMB.entidade.nomeCompleto}" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questaoMB.view.mostrarListagem}">
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{questaoMB.entidades}"
+                                         var="questao"
+                                         excel="true"
+                                         csv="true"
+                                         pdf="true"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         custom-lang-url="//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="table">
+                                <b:dataTableColumn value="#{questao.rotulo}"                                                    
+                                                   label="Rótulo"
+                                                   orderable="false"/>
+                                <b:dataTableColumn value="#{questao.texto}"                                                    
+                                                   label="Texto"
+                                                   orderable="false"/>
+                                <b:dataTableColumn value="#{questao.dica}" 
+                                                   label="Dica"
+                                                   orderable="false"/>
+                                <b:dataTableColumn value="#{questao.ordem}" 
+                                                   label="Ordem"
+                                                   orderable="false"/>
+                                <b:dataTableColumn label="" 
+                                                   width="120px"
+                                                   orderable="false">
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="angle-up" 
+                                                     look="info" 
+                                                     action="#{questaoMB.subir(questao)}" 
+                                                     title="Subir"/>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="angle-down" 
+                                                     look="info" 
+                                                     action="#{questaoMB.descer(questao)}" 
+                                                     title="Descer"/>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="pencil" 
+                                                     look="primary" 
+                                                     action="#{questaoMB.editar(questao)}" 
+                                                     title="Editar" 
+                                                     update="listagem, edicaoaberta, edicaomultiplaescolha"/>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="trash" 
+                                                     look="danger" 
+                                                     action="#{questaoMB.remover(questao)}" 
+                                                     title="Excluir"/>                                                                                                                                                                                   
+                                </b:dataTableColumn>
+                            </b:dataTable>                            
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="3">
+                            <b:commandButton value="Adicionar Aberta" 
+                                             action="#{questaoMB.novaAberta}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Adicionar Múltipla Escolha" 
+                                             action="#{questaoMB.novaMultiplaEscolha}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{questaoMB.cancelar}" 
+                                             immediate="true" 
+                                             look="danger" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha"
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+        <!-- 
+        Painel de edição de questão aberta 
+        -->
+        <h:form id="edicaoaberta">
+            <b:container>
+                <b:panel title="Edição de Questão aberta" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questaoMB.aberta}">                                       
+                    <!-- 
+                    Rótulo 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Rótulo" 
+                                         id="rotuloaberta" 
+                                         value="#{questaoMB.entidade.rotulo}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Rótulo:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pen" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="rotuloaberta"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Texto 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Texto" 
+                                         id="textoaberta" 
+                                         value="#{questaoMB.entidade.texto}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Texto:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="question" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="textoaberta"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Dica 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Dica" 
+                                         id="dicaaberta" 
+                                         value="#{questaoMB.entidade.dica}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Dica:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="lightbulb" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="dicaaberta"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Tamanho 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="" 
+                                         id="tamanhoaberta" 
+                                         value="#{questaoMB.entidade.tamanho}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Tamanho:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pencil-ruler" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="tamanhoaberta"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Obrigatória? 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:selectOneMenu value="#{questaoMB.entidade.obrigatoria}" 
+                                             colMd="16" 
+                                             required="true" 
+                                             labelColMd="14" 
+                                             label="Obrigatória:" 
+                                             id="obrigatoriaaberta">
+                                <f:selectItem itemLabel="Sim" 
+                                              itemValue="#{true}" />
+                                <f:selectItem itemLabel="Não" 
+                                              itemValue="#{false}" />
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="check-square" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:selectOneMenu>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="obrigatoriaaberta"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Botões
+                    -->
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Salvar" 
+                                             action="#{questaoMB.salvarEdicao}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{questaoMB.cancelarEdicao}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>                             
+        <!-- 
+        Painel de edição de questão de múltipla escolha 
+        -->
+        <h:form id="edicaomultiplaescolha">
+            <b:container>
+                <b:panel title="Edição de Questão de Múltipla Escolha" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{questaoMB.multiplaEscolha}">                                       
+                    <!-- 
+                    Rótulo 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Rótulo" 
+                                         id="rotulomultiplaescolha" 
+                                         value="#{questaoMB.entidade.rotulo}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Rótulo:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pen" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="rotulomultiplaescolha"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Texto 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Texto" 
+                                         id="textomultiplaescolha" 
+                                         value="#{questaoMB.entidade.texto}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Texto:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="question" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="textomultiplaescolha"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Dica 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="Dica" 
+                                         id="dicamultiplaescolha" 
+                                         value="#{questaoMB.entidade.dica}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Dica:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="lightbulb" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="dicamultiplaescolha"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Quantidade mínima 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="" 
+                                         id="quantidademinimamultiplaescolha" 
+                                         value="#{questaoMB.entidade.quantidadeMinima}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Quantidade mínima:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pencil-ruler" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="quantidademinimamultiplaescolha"/>
+                        </b:column>
+                    </b:row>
+                    <!-- 
+                    Quantidade máxima 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:inputText placeholder="" 
+                                         id="quantidademaximamultiplaescolha" 
+                                         value="#{questaoMB.entidade.quantidadeMaxima}"
+                                         ajax="true" 
+                                         autocomplete="false" 
+                                         update="@(.message)" 
+                                         class="bf-required" 
+                                         label="Quantidade máxima:">
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="pencil-ruler" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:inputText>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="quantidademaximamultiplaescolha"/>
+                        </b:column>
+                    </b:row>                    
+                    <!-- 
+                    Obrigatória? 
+                    -->
+                    <b:row>                        
+                        <b:column medium-screen="12">
+                            <b:selectOneMenu value="#{questaoMB.entidade.obrigatoria}" 
+                                             colMd="16" 
+                                             required="true" 
+                                             labelColMd="14" 
+                                             label="Obrigatória:" 
+                                             id="obrigatoriamultiplaescolha">
+                                <f:selectItem itemLabel="Sim" 
+                                              itemValue="#{true}" />
+                                <f:selectItem itemLabel="Não" 
+                                              itemValue="#{false}" />
+                                <f:facet name="prepend">
+                                    <b:iconAwesome value="check-square" 
+                                                   solid="true"/>                                    
+                                </f:facet>
+                            </b:selectOneMenu>
+                        </b:column>
+                        <b:column medium-screen="12" 
+                                  style-class="message">
+                            <b:message for="obrigatoriamultiplaescolha"/>
+                        </b:column>
+                    </b:row>                                     
+                    <!-- 
+                    Tabela para edição de opções 
+                    -->                   
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{questaoMB.opcoes}"
+                                         var="opcao"
+                                         excel="false"
+                                         csv="false"
+                                         pdf="false"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         info="false"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="table"
+                                         searching="false"
+                                         paginated="false"
+                                         select="false"
+                                         selection-mode="single"
+                                         selectedRow="false"
+                                         selectedColumn="false">
+                                <b:dataTableColumn orderable="false" 
+                                                   label="Texto completo">    
+                                    <b:inputText placeholder="Clique para editar" 
+                                                 value="#{opcao.textoCompleto}"
+                                                 ajax="true" 
+                                                 autocomplete="false" 
+                                                 update="@(.message)" 
+                                                 class="bf-required" 
+                                                 size="70">
+                                    </b:inputText>
+                                    <b:message for="@previous"/>
+                                </b:dataTableColumn>
+                                <b:dataTableColumn orderable="false" 
+                                                   label="Texto curto para uso em relatório">    
+                                    <b:inputText placeholder="Clique para editar" 
+                                                 value="#{opcao.textoCurto}"
+                                                 ajax="true" 
+                                                 autocomplete="false" 
+                                                 update="@(.message)" 
+                                                 class="bf-required" 
+                                                 size="30">
+                                    </b:inputText>
+                                    <b:message for="@previous"/>
+                                </b:dataTableColumn>
+                                <b:dataTableColumn width="20px"
+                                                   orderable="false">  
+                                    <f:facet name="header">
+                                        <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="plus" 
+                                                     look="primary" 
+                                                     action="#{questaoMB.adicionarOpcao}" 
+                                                     title="Adicionar Opção"                                                     
+                                                     update="listagem, edicaoaberta, edicaomultiplaescolha"/>
+                                    </f:facet>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="trash" 
+                                                     look="danger" 
+                                                     action="#{questaoMB.removerOpcao(opcao)}" 
+                                                     title="Excluir opção"
+                                                     immediate="true"
+                                                     update="listagem, edicaoaberta, edicaomultiplaescolha"/>
+                                </b:dataTableColumn>
+                            </b:dataTable>                           
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>
+                    <!--
+                    Botões
+                    -->                    
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Salvar" 
+                                             action="#{questaoMB.salvarEdicao}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{questaoMB.cancelarEdicao}" 
+                                             update="listagem, edicaoaberta, edicaomultiplaescolha" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+    </ui:define>
+</ui:composition>

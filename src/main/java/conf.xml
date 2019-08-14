@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuracao>
+    <conexao>
+        <propriedades>
+			<propriedade>
+				<nome>mail.transport.protocol</nome>
+				<valor>smtp</valor>            
+			</propriedade>
+			<propriedade>
+				<nome>mail.smtp.starttls.enable</nome>
+				<valor>true</valor>            
+			</propriedade>
+			<propriedade>
+				<nome>mail.smtp.host</nome>
+				<valor>mail.valterestevam.com.br</valor>
+			</propriedade>
+			<propriedade>
+				<nome>mail.smtp.auth</nome>
+				<valor>true</valor>
+			</propriedade>
+			<propriedade>
+				<nome>mail.smtp.user</nome>
+				<valor>usuario@valterestevam.com.br</valor>
+			</propriedade>
+			<propriedade>
+				<nome>mail.debug</nome>
+				<valor>true</valor>
+			</propriedade>
+			<propriedade>
+				<nome>mail.smtp.port</nome>
+				<valor>587</valor>
+		   </propriedade>		   
+        </propriedades>        
+       <autenticacao>
+           <usuario>usuario@valterestevam.com.br</usuario>
+           <senha>senha</senha> 
+       </autenticacao>                            
+    </conexao>    
+</configuracao>

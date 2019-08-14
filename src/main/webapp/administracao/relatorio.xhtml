@@ -1,0 +1,250 @@
+<!--
+ Copyright 2019 Valter Luís Estevam Junior
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, 
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License. 
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/LayoutAdministrador.xhtml"
+                xmlns:b="http://bootsfaces.net/ui">
+    <ui:define name="content">
+        <h:outputStylesheet name="select.css" 
+                            library="css"/>
+        <!-- 
+        Painel de listagem de questionários 
+        -->
+        <h:form id="listagemquestionarios">
+            <b:growl id="growlMsg" 
+                     globalOnly="true" 
+                     placementFrom="top"
+                     show-detail="true" 
+                     show-summary="false" 
+                     allowDismiss="true" 
+                     animation-enter="animated bounceInDown"
+                     animation-exit="animated flipOutX"
+                     delay="5000" 
+                     escape="true" />
+            <b:container>
+                <b:panel title="Questionários" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{relatorioMB.mostrarListagem}">
+                    <b:row>
+                        <b:column>
+                            <b:dataTable value="#{relatorioMB.questionarios}"
+                                         var="questionario"
+                                         excel="true"
+                                         csv="true"
+                                         pdf="true"
+                                         columnVisibility="false"
+                                         copy="false"
+                                         print="false"
+                                         custom-lang-url="//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"
+                                         responsive="true"
+                                         scroll-x="false"
+                                         fixedHeader="false"
+                                         scroll-size="400px"
+                                         id="tablequestionario">
+                                <b:dataTableColumn value="#{questionario.nomeCompleto}" 
+                                                   order="asc" 
+                                                   label="Nome completo"/>
+                                <b:dataTableColumn value="#{questionario.descricao}" 
+                                                   label="Descrição"/>  
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraInicio)}"                                    
+                                                   label="Data e Hora de Início"/>
+                                <b:dataTableColumn value="#{formatadorData.getDataHora(questionario.dataHoraFinal)}"                    
+                                                   label="Data e Hora de Fim"/>                                                                
+                                <b:dataTableColumn label="" 
+                                                   width="50px">
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="cog" 
+                                                     look="primary" 
+                                                     action="#{relatorioMB.selecionarQuestionario(questionario)}" 
+                                                     title="Configurar relatório" 
+                                                     update="listagemquestionarios, configuracaoquestionarios"/>
+                                    <b:commandButton style="padding: 0 8px;" 
+                                                     iconAwesome="users" 
+                                                     look="info" 
+                                                     action="#{relatorioMB.validarRespondentes(questionario)}" 
+                                                     title="Validar respondentes" 
+                                                     update="listagemquestionarios, configuracaoquestionarios"/>
+                                </b:dataTableColumn>
+                            </b:dataTable>                            
+                        </b:column>
+                        <b:column>
+                            <b:message id="msgerr" />
+                        </b:column>
+                    </b:row>                    
+                </b:panel>
+            </b:container>
+        </h:form>
+        <!-- 
+        Painel de configuração de relatório 
+        -->
+        <h:form id="configuracaoquestionarios">
+            <b:container>
+                <b:panel title="Configuração de relatório" 
+                         look="primary" 
+                         medium-screen="12" 
+                         rendered="#{relatorioMB.mostrarFormulario}">
+                    <!-- 
+                    Categorias 
+                    -->     
+                    <div class="select">
+                        <b:row>
+                            <b:column medium-screen="12">                                
+                                <b:selectMultiMenu value="#{relatorioMB.configuracaoRelatorio.categoriasSelecionadas}" 
+                                                   id="categorias" 
+                                                   label="Categorias"
+                                                   allSelectedText="Todas as categorias selecionadas."
+                                                   nonSelectedText="Nenhuma categoria selecionada.">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome name="list-alt" />
+                                    </f:facet>
+                                    <f:selectItems value="#{relatorioMB.configuracaoRelatorio.categorias}" 
+                                                   var="categoria" 
+                                                   itemLabel="#{categoria.rotuloCompleto}" 
+                                                   itemValue="#{relatorioMB.idString(categoria.idCategoria)}"/>                                                                
+                                </b:selectMultiMenu>
+                                <b:column medium-screen="12" 
+                                          style-class="message">
+                                    <b:message for="categorias"/>
+                                </b:column>
+                            </b:column>
+                        </b:row>
+                    </div>
+                    <!-- 
+                    Campus 
+                    -->     
+                    <div class="select">
+                        <b:row>
+                            <b:column medium-screen="12">                                
+                                <b:selectMultiMenu value="#{relatorioMB.configuracaoRelatorio.campiSelecionados}" 
+                                                   id="campus" 
+                                                   label="Campus"
+                                                   allSelectedText="Todas os campus selecionados."
+                                                   nonSelectedText="Nenhum campus selecionado.">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome name="list-alt" />
+                                    </f:facet>
+                                    <f:selectItems value="#{relatorioMB.configuracaoRelatorio.campus}" 
+                                                   var="campus" 
+                                                   itemLabel="#{campus.nomeCompleto}" 
+                                                   itemValue="#{relatorioMB.idString(campus.idCampus)}"/>                                                                
+                                </b:selectMultiMenu>
+                                <b:column medium-screen="12" 
+                                          style-class="message">
+                                    <b:message for="campus"/>
+                                </b:column>
+                            </b:column>
+                        </b:row>
+                    </div>
+                    <!-- 
+                    Tabelas 
+                    -->     
+                    <div class="select">
+                        <b:row>
+                            <b:column medium-screen="12">                                
+                                <b:selectOneMenu value="#{relatorioMB.configuracaoRelatorio.tipoTabela}" 
+                                                 colMd="16" 
+                                                 required="true" 
+                                                 labelColMd="14" 
+                                                 id="tabela" 
+                                                 label="Tabelas:">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome name="table" />
+                                    </f:facet>
+                                    <f:selectItem itemLabel="Valores absolutos" 
+                                                  itemValue="Valores absolutos">
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Valores percentuais" 
+                                                  itemValue="Valores percentuais">                                                      
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Valores absolutos e percentuais" 
+                                                  itemValue="Ambos">                                        
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Não exibir" 
+                                                  itemValue="Não exibir">                                        
+                                    </f:selectItem>                                                                                                           
+                                </b:selectOneMenu>
+                                <b:column medium-screen="12" 
+                                          style-class="message">
+                                    <b:message for="tabela"/>
+                                </b:column>
+                            </b:column>
+                        </b:row>
+                    </div>
+                    <!-- 
+                    Gráficos 
+                    -->     
+                    <div class="select">
+                        <b:row>
+                            <b:column medium-screen="12">                                
+                                <b:selectOneMenu value="#{relatorioMB.configuracaoRelatorio.tipoGrafico}" 
+                                                 colMd="16" 
+                                                 required="true" 
+                                                 labelColMd="14" 
+                                                 id="grafico" 
+                                                 label="Gráficos:">
+                                    <f:facet name="prepend">
+                                        <b:iconAwesome name="image" />
+                                    </f:facet>
+                                    <f:selectItem itemLabel="Valores absolutos" 
+                                                  itemValue="Valores absolutos"> 
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Valores percentuais" 
+                                                  itemValue="Valores percentuais"> 
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Valores absolutos e percentuais" 
+                                                  itemValue="Ambos"> 
+                                    </f:selectItem>
+                                    <f:selectItem itemLabel="Não exibir"
+                                                  itemValue="Não exibir"> 
+                                    </f:selectItem>                                                                                                           
+                                </b:selectOneMenu>
+                                <b:column medium-screen="12" 
+                                          style-class="message">
+                                    <b:message for="grafico"/>
+                                </b:column>
+                            </b:column>
+                        </b:row>
+                    </div>                   
+                    <!-- 
+                    Botões 
+                    -->                    
+                    <b:row>
+                        <b:column span="3" 
+                                  offset="6">
+                            <b:commandButton value="Gerar relatório" 
+                                             action="#{relatorioMB.gerarRelatorio}" 
+                                             update="listagemquestionarios, configuracaoquestionarios" 
+                                             look="primary" 
+                                             style="width:100%" />
+                        </b:column>
+                        <b:column span="3">
+                            <b:commandButton value="Cancelar" 
+                                             action="#{relatorioMB.cancelar}" 
+                                             update="listagemquestionarios, configuracaoquestionarios" 
+                                             immediate="true"
+                                             look="danger" 
+                                             style="width:100%" />
+                        </b:column>
+                    </b:row>
+                </b:panel>
+            </b:container>
+        </h:form>
+    </ui:define>
+</ui:composition>
